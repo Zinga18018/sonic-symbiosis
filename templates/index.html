@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonic Symbiosis - AI-Powered Plant Therapy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .visualization-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .plant-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .plant-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .plant-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .plant-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .plant-health {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.stop {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        }
+
+        .soundwave-container {
+            height: 300px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .soundwave {
+            width: 100%;
+            height: 100%;
+        }
+
+        .session-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .session-info h3 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .analytics-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .analytics-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .analytics-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        .status-inactive {
+            background: #6c757d;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Sonic Symbiosis</h1>
+            <p>AI-powered therapeutic soundscapes from plant bioacoustic data</p>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <h2>Therapy Session Control</h2>
+                
+                <div class="form-group">
+                    <label for="mood">Current Mood:</label>
+                    <select id="mood">
+                        <option value="calm">Calm</option>
+                        <option value="stressed">Stressed</option>
+                        <option value="energetic">Energetic</option>
+                        <option value="focused">Focused</option>
+                        <option value="relaxed">Relaxed</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="goal">Therapy Goal:</label>
+                    <select id="goal">
+                        <option value="stress_relief">Stress Relief</option>
+                        <option value="focus_enhancement">Focus Enhancement</option>
+                        <option value="mood_improvement">Mood Improvement</option>
+                        <option value="sleep_preparation">Sleep Preparation</option>
+                        <option value="energy_boost">Energy Boost</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Session Duration (minutes):</label>
+                    <input type="number" id="duration" min="5" max="60" value="15">
+                </div>
+
+                <div class="form-group">
+                    <label>Select Plants:</label>
+                    <div class="plant-selection" id="plantSelection">
+                        <!-- Plants will be loaded here -->
+                    </div>
+                </div>
+
+                <button class="btn" id="startBtn" onclick="startSession()">Start Therapy Session</button>
+                <button class="btn stop" id="stopBtn" onclick="stopSession()" style="display: none;">Stop Session</button>
+            </div>
+
+            <div class="visualization-panel">
+                <h2>Live Soundscape</h2>
+                
+                <div class="session-info" id="sessionInfo" style="display: none;">
+                    <h3><span class="status-indicator status-inactive" id="statusIndicator"></span>Session Status</h3>
+                    <div id="sessionDetails"></div>
+                </div>
+
+                <div class="soundwave-container">
+                    <svg class="soundwave" id="soundwave">
+                        <text x="50%" y="50%" text-anchor="middle" fill="#ccc" font-size="18">
+                            Start a session to see live soundscape visualization
+                        </text>
+                    </svg>
+                </div>
+
+                <div class="analytics-grid" id="analyticsGrid">
+                    <!-- Analytics will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSession = null;
+        let websocket = null;
+        let animationId = null;
+
+        // Load plants on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPlants();
+        });
+
+        async function loadPlants() {
+            try {
+                const response = await fetch('/api/plants');
+                const data = await response.json();
+                
+                const plantSelection = document.getElementById('plantSelection');
+                plantSelection.innerHTML = '';
+                
+                data.plants.forEach(plant => {
+                    const plantCard = document.createElement('div');
+                    plantCard.className = 'plant-card';
+                    plantCard.dataset.plantId = plant.id;
+                    plantCard.onclick = () => togglePlantSelection(plantCard);
+                    
+                    plantCard.innerHTML = `
+                        <div><strong>${plant.name}</strong></div>
+                        <div>${plant.type}</div>
+                        <div class="plant-health">Health: ${plant.health}%</div>
+                    `;
+                    
+                    plantSelection.appendChild(plantCard);
+                });
+            } catch (error) {
+                console.error('Error loading plants:', error);
+            }
+        }
+
+        function togglePlantSelection(plantCard) {
+            plantCard.classList.toggle('selected');
+        }
+
+        async function startSession() {
+            const mood = document.getElementById('mood').value;
+            const goal = document.getElementById('goal').value;
+            const duration = parseInt(document.getElementById('duration').value);
+            
+            const selectedPlants = Array.from(document.querySelectorAll('.plant-card.selected'))
+                .map(card => card.dataset.plantId);
+            
+            if (selectedPlants.length === 0) {
+                alert('Please select at least one plant for your therapy session.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/therapy/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_mood: mood,
+                        therapy_goal: goal,
+                        duration_minutes: duration,
+                        selected_plants: selectedPlants
+                    })
+                });
+                
+                const data = await response.json();
+                currentSession = data.session_id;
+                
+                // Update UI
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'block';
+                document.getElementById('sessionInfo').style.display = 'block';
+                document.getElementById('statusIndicator').className = 'status-indicator status-active';
+                
+                document.getElementById('sessionDetails').innerHTML = `
+                    <p><strong>Session ID:</strong> ${currentSession}</p>
+                    <p><strong>Duration:</strong> ${duration} minutes</p>
+                    <p><strong>Plants:</strong> ${selectedPlants.length} selected</p>
+                    <p><strong>Goal:</strong> ${goal.replace('_', ' ')}</p>
+                `;
+                
+                // Start WebSocket connection
+                connectWebSocket(currentSession);
+                
+                // Load initial analytics
+                loadAnalytics(currentSession);
+                
+            } catch (error) {
+                console.error('Error starting session:', error);
+                alert('Failed to start therapy session. Please try again.');
+            }
+        }
+
+        async function stopSession() {
+            if (!currentSession) return;
+            
+            try {
+                await fetch(`/api/therapy/${currentSession}`, {
+                    method: 'DELETE'
+                });
+                
+                // Close WebSocket
+                if (websocket) {
+                    websocket.close();
+                    websocket = null;
+                }
+                
+                // Update UI
+                document.getElementById('startBtn').style.display = 'block';
+                document.getElementById('stopBtn').style.display = 'none';
+                document.getElementById('statusIndicator').className = 'status-indicator status-inactive';
+                
+                // Clear visualization
+                clearSoundwaveVisualization();
+                
+                currentSession = null;
+                
+            } catch (error) {
+                console.error('Error stopping session:', error);
+            }
+        }
+
+        function connectWebSocket(sessionId) {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/live-soundscape/${sessionId}`;
+            
+            websocket = new WebSocket(wsUrl);
+            
+            websocket.onopen = function(event) {
+                console.log('WebSocket connected');
+            };
+            
+            websocket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.status === 'session_ended') {
+                    stopSession();
+                    return;
+                }
+                
+                updateSoundwaveVisualization(data);
+            };
+            
+            websocket.onclose = function(event) {
+                console.log('WebSocket disconnected');
+            };
+            
+            websocket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        function updateSoundwaveVisualization(data) {
+            const svg = document.getElementById('soundwave');
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            
+            // Clear previous content
+            svg.innerHTML = '';
+            
+            // Create visualization based on plant data
+            data.plants.forEach((plant, index) => {
+                const features = plant.audio_features;
+                const y = (height / data.plants.length) * index + (height / data.plants.length) / 2;
+                
+                // Create waveform representation
+                const amplitude = features.amplitude * 100;
+                const frequency = features.spectral_centroid_mean / 1000; // Normalize
+                
+                // Draw waveform
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                let pathData = `M 0 ${y}`;
+                
+                for (let x = 0; x < width; x += 5) {
+                    const wave = Math.sin((x / width) * frequency * Math.PI * 4) * amplitude * 0.3;
+                    pathData += ` L ${x} ${y + wave}`;
+                }
+                
+                path.setAttribute('d', pathData);
+                path.setAttribute('stroke', `hsl(${index * 120}, 70%, 50%)`);
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('opacity', '0.8');
+                
+                svg.appendChild(path);
+                
+                // Add plant label
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', '10');
+                text.setAttribute('y', y - amplitude * 0.3 - 10);
+                text.setAttribute('fill', `hsl(${index * 120}, 70%, 40%)`);
+                text.setAttribute('font-size', '12');
+                text.textContent = plant.name;
+                
+                svg.appendChild(text);
+            });
+        }
+
+        function clearSoundwaveVisualization() {
+            const svg = document.getElementById('soundwave');
+            svg.innerHTML = `
+                <text x="50%" y="50%" text-anchor="middle" fill="#ccc" font-size="18">
+                    Start a session to see live soundscape visualization
+                </text>
+            `;
+        }
+
+        async function loadAnalytics(sessionId) {
+            try {
+                const response = await fetch(`/api/analytics/${sessionId}`);
+                const data = await response.json();
+                
+                const analyticsGrid = document.getElementById('analyticsGrid');
+                analyticsGrid.innerHTML = '';
+                
+                // Display key metrics
+                const metrics = [
+                    { label: 'Stress Reduction', value: Math.round(data.therapy_effectiveness.stress_reduction * 100) + '%' },
+                    { label: 'Focus Improvement', value: Math.round(data.therapy_effectiveness.focus_improvement * 100) + '%' },
+                    { label: 'Mood Enhancement', value: Math.round(data.therapy_effectiveness.mood_enhancement * 100) + '%' },
+                    { label: 'Duration', value: Math.round(data.duration_minutes) + 'm' }
+                ];
+                
+                metrics.forEach(metric => {
+                    const card = document.createElement('div');
+                    card.className = 'analytics-card';
+                    card.innerHTML = `
+                        <div class="analytics-value">${metric.value}</div>
+                        <div class="analytics-label">${metric.label}</div>
+                    `;
+                    analyticsGrid.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+            }
+        }
+
+        // Update analytics periodically during active session
+        setInterval(() => {
+            if (currentSession) {
+                loadAnalytics(currentSession);
+            }
+        }, 10000); // Every 10 seconds
+    </script>
+</body>
+</html>
